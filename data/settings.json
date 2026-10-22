@@ -18,38 +18,38 @@
   "hours": [
     {
       "day": "Montag",
-      "open": "09:00",
-      "close": "22:00"
+      "open": "10:00",
+      "close": "20:00"
     },
     {
       "day": "Dienstag",
-      "open": "09:00",
-      "close": "22:00"
+      "open": "10:00",
+      "close": "20:00"
     },
     {
       "day": "Mittwoch",
-      "open": "09:00",
-      "close": "22:00"
+      "open": "10:00",
+      "close": "20:00"
     },
     {
       "day": "Donnerstag",
-      "open": "09:00",
-      "close": "22:00"
+      "open": "10:00",
+      "close": "20:00"
     },
     {
       "day": "Freitag",
-      "open": "09:00",
-      "close": "22:00"
+      "open": "10:00",
+      "close": "20:00"
     },
     {
       "day": "Samstag",
-      "open": "09:00",
-      "close": "22:00"
+      "open": "10:00",
+      "close": "20:00"
     },
     {
       "day": "Sonntag",
-      "open": "12:00",
-      "close": "20:00"
+      "open": "",
+      "close": ""
     }
   ],
   "special_hours": [],
