@@ -28,6 +28,36 @@ export default {
       if (!fn) return json(405, { error: "Methode nicht erlaubt." });
       return fn({ request: request, env: env, waitUntil: ctx && ctx.waitUntil ? ctx.waitUntil.bind(ctx) : function () {} });
     }
+    if (p.startsWith("/data/") && request.method === "GET") return dataLive(request, env);
     return env.ASSETS.fetch(request);
   },
 };
+
+// Inhaltsdateien (Produkte, Einstellungen, Bilder) kommen FRISCH aus GitHub –
+// strategisch knapper Zwischenspeicher (60 Sekunden), damit "Speichern" in der
+// Verwaltung nach spätestens einer Minute auf der Website ankommt, ohne Bereitstellung.
+async function dataLive(request, env) {
+  const repo = String(env.GITHUB_REPO || "Sd031988/networkcity2");
+  const url = new URL(request.url);
+  const raw = "https://raw.githubusercontent.com/" + repo + "/main" + url.pathname;
+  const res = await fetch(raw, { cf: { cacheTtl: 60, cacheEverything: true } });
+  if (!res.ok) return env.ASSETS.fetch(request);
+  return new Response(res.body, {
+    status: 200,
+    headers: {
+      "Content-Type": res.headers.get("Content-Type") || guessType(url.pathname),
+      "Cache-Control": "public, max-age=60, s-maxage=60",
+      "Access-Control-Allow-Origin": "*",
+    },
+  });
+}
+
+function guessType(path) {
+  if (/\.json$/i.test(path)) return "application/json; charset=utf-8";
+  if (/\.jpe?g$/i.test(path)) return "image/jpeg";
+  if (/\.png$/i.test(path)) return "image/png";
+  if (/\.webp$/i.test(path)) return "image/webp";
+  if (/\.svg$/i.test(path)) return "image/svg+xml";
+  if (/\.woff2?$/i.test(path)) return "font/woff2";
+  return "application/octet-stream";
+}
