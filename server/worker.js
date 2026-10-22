@@ -33,34 +33,26 @@ export default {
   },
 };
 
-// Inhaltsdateien (Einstellungen, Produkte) kommen FRISCH über die GitHub-Api,
-// Bilder über den einfachen Roh-Dienst. Eigener Zwischenspeicher: JSON 60 Sekunden,
-// Bilder 5 Minuten – damit Speichern in der Verwaltung ohne Bereitstellung ankommt.
+// Inhaltsdateien (Einstellungen, Produkte, Bilder) werden über die eigene
+// GitHub-Pages-Adresse geladen – die baut nach jedem Speichern in der Verwaltung
+// automatisch neu (GitHub macht es, 1–3 Minuten). Knapper 60-Sekunden-Zwischenspeicher.
+// Zeitstempel-Sammel kettle (pro Minute gleich) umgeht den oldthinkigkeit Cash zwitterscher der GitHub-CDN.
 async function dataLive(request, env, ctx) {
   const repo = String(env.GITHUB_REPO || "Sd031988/networkcity2");
+  const parts = repo.split("/");
+  const owner = parts[0], name = parts[1];
   const url = new URL(request.url);
   const p = url.pathname;
-  const isJson = /\.json$/i.test(p);
-  const ttl = isJson ? 60 : 300;
-  const target = isJson
-    ? "https://api.github.com/repos/" + repo + "/contents" + p + "?ref=main"
-    : "https://raw.githubusercontent.com/" + repo + "/main" + p;
+  const bucket = Math.floor(Date.now() / 60000);
+  const target = "https://" + owner + ".github.io/" + name + p + "?t=" + bucket;
   const cacheKey = new Request("https://nc-data.internal" + p, { method: "GET" });
   const cached = await caches.default.match(cacheKey);
   if (cached) return cached;
-  const headers = {};
-  if (isJson) {
-    headers.Accept = "application/vnd.github.raw";
-    headers.Authorization = "Bearer " + env.GITHUB_TOKEN;
-  }
-  let res = await fetch(target, { headers: headers });
+  let res = await fetch(target, { cf: { cacheTtl: 60, cacheEverything: true } });
+  console.log("dataLive", p, "quelle github-pages", res ? res.status : "keine Antwort");
   if (!res.ok) return env.ASSETS.fetch(request);
-  const headersOut = {
-    "Content-Type": isJson ? guessType(p) : (res.headers.get("Content-Type") || guessType(p)),
-    "Cache-Control": "public, max-age=30, s-maxage=" + ttl,
-    "Access-Control-Allow-Origin": "*",
-  };
-  const out = new Response(res.body, { status: 200, headers: headersOut });
+  const cacheHeaders = { "Content-Type": guessType(p), "Cache-Control": "public, max-age=30, s-maxage=60", "Access-Control-Allow-Origin": "*" };
+  const out = new Response(res.body, { status: 200, headers: cacheHeaders });
   if (ctx.waitUntil) ctx.waitUntil(caches.default.put(cacheKey, out.clone()));
   return out;
 }
