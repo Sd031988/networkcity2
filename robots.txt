@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 
-Sitemap: https://sd031988.github.io/networkcity2/sitemap.xml
+Sitemap: https://networkcity-heidelberg2.com/sitemap.xml

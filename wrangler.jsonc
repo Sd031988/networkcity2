@@ -3,6 +3,11 @@
   "name": "networkcity2",
   "main": "server/worker.js",
   "compatibility_date": "2025-09-01",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "networkcity-heidelberg2.com", "custom_domain": true },
+    { "pattern": "www.networkcity-heidelberg2.com", "custom_domain": true }
+  ],
   "assets": {
     "directory": ".",
     "binding": "ASSETS",

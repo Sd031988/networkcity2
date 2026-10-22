@@ -1375,7 +1375,7 @@
       esc(b.street), esc(b.zip_city),
       b.phone ? "Tel.: " + esc(b.phone) : "",
       b.email ? esc(b.email) : "",
-      "sd031988.github.io/networkcity2",
+      "networkcity-heidelberg2.com",
     ].filter(Boolean).join("<br>");
     let sheet = document.getElementById("print-sheet");
     if (!sheet) { sheet = document.createElement("div"); sheet.id = "print-sheet"; document.body.appendChild(sheet); }
