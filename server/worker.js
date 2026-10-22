@@ -28,28 +28,41 @@ export default {
       if (!fn) return json(405, { error: "Methode nicht erlaubt." });
       return fn({ request: request, env: env, waitUntil: ctx && ctx.waitUntil ? ctx.waitUntil.bind(ctx) : function () {} });
     }
-    if (p.startsWith("/data/") && request.method === "GET") return dataLive(request, env);
+    if (p.startsWith("/data/") && request.method === "GET") return dataLive(request, env, ctx);
     return env.ASSETS.fetch(request);
   },
 };
 
-// Inhaltsdateien (Produkte, Einstellungen, Bilder) kommen FRISCH aus GitHub –
-// strategisch knapper Zwischenspeicher (60 Sekunden), damit "Speichern" in der
-// Verwaltung nach spätestens einer Minute auf der Website ankommt, ohne Bereitstellung.
-async function dataLive(request, env) {
+// Inhaltsdateien (Einstellungen, Produkte) kommen FRISCH über die GitHub-Api,
+// Bilder über den einfachen Roh-Dienst. Eigener Zwischenspeicher: JSON 60 Sekunden,
+// Bilder 5 Minuten – damit Speichern in der Verwaltung ohne Bereitstellung ankommt.
+async function dataLive(request, env, ctx) {
   const repo = String(env.GITHUB_REPO || "Sd031988/networkcity2");
   const url = new URL(request.url);
-  const raw = "https://raw.githubusercontent.com/" + repo + "/main" + url.pathname;
-  const res = await fetch(raw, { cf: { cacheTtl: 60, cacheEverything: true } });
+  const p = url.pathname;
+  const isJson = /\.json$/i.test(p);
+  const ttl = isJson ? 60 : 300;
+  const target = isJson
+    ? "https://api.github.com/repos/" + repo + "/contents" + p + "?ref=main"
+    : "https://raw.githubusercontent.com/" + repo + "/main" + p;
+  const cacheKey = new Request("https://nc-data.internal" + p, { method: "GET" });
+  const cached = await caches.default.match(cacheKey);
+  if (cached) return cached;
+  const headers = {};
+  if (isJson) {
+    headers.Accept = "application/vnd.github.raw";
+    headers.Authorization = "Bearer " + env.GITHUB_TOKEN;
+  }
+  let res = await fetch(target, { headers: headers });
   if (!res.ok) return env.ASSETS.fetch(request);
-  return new Response(res.body, {
-    status: 200,
-    headers: {
-      "Content-Type": res.headers.get("Content-Type") || guessType(url.pathname),
-      "Cache-Control": "public, max-age=60, s-maxage=60",
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
+  const headersOut = {
+    "Content-Type": isJson ? guessType(p) : (res.headers.get("Content-Type") || guessType(p)),
+    "Cache-Control": "public, max-age=30, s-maxage=" + ttl,
+    "Access-Control-Allow-Origin": "*",
+  };
+  const out = new Response(res.body, { status: 200, headers: headersOut });
+  if (ctx.waitUntil) ctx.waitUntil(caches.default.put(cacheKey, out.clone()));
+  return out;
 }
 
 function guessType(path) {
