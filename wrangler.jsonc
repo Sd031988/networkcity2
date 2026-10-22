@@ -1,0 +1,11 @@
+// Konfiguration für Cloudflare Workers (Bereitstellung mit "npx wrangler deploy")
+{
+  "name": "networkcity2",
+  "main": "server/worker.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  }
+}
