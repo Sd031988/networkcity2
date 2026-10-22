@@ -1,7 +1,7 @@
 {
   "business": {
     "name": "Networkcity 2",
-    "tagline": "Internetcafé · Handys · Reparatur · Zubehör",
+    "tagline": "Unsere 2. Filiale · Internetcafé · Handys · Reparatur · Zubehör",
     "street": "",
     "zip_city": "",
     "phone": "",
@@ -11,9 +11,9 @@
     "logo": "networkcity_logo_2026.jpg",
     "hero_image": "networkcity_banner_2026.jpg",
     "gallery": [],
-    "hero_title": "Ihr Service-Center – Jetzt auch Zuhause",
-    "hero_subtitle": "Internetcafé, neue und gebrauchte Handys, Zubehör und Reparaturen – alles unter einem Dach. Kommen Sie vorbei, wir beraten Sie gerne!",
-    "about_text": "Networkcity 2 ist Ihr zuverlässiger Ansprechpartner vor Ort. Wir betreiben ein modernes Internetcafé, verkaufen neue und geprüfte Gebraucht-Handys sowie Zubehör und reparieren Ihr Smartphone schnell und zu fairen Preisen. Bei uns bekommen Sie persönliche Beratung und Service auf Augenhöhe."
+    "hero_title": "Neu eröffnet – Unsere 2. Filiale!",
+    "hero_subtitle": "Die Networkcity-Familie wächst: Internetcafé, neue und geprüft gebrauchte Handys, Zubehör und Reparaturen – gleiche Qualität, gleiches Herz, jetzt an unserem zweiten Standort. Kommen Sie vorbei, wir beraten Sie gerne!",
+    "about_text": "Wir sind die zweite Filiale der Networkcity-Familie – und stolz darauf! Bei uns erwartet Sie dieselbe Qualität wie im ersten Laden: modernes Internetcafé, neue und geprüft gebrauchte Handys, Zubehör und schnelle Reparaturen zu fairen Preisen. Gleiche Leidenschaft, zweiter Standort – wir freuen uns auf Ihren Besuch!"
   },
   "hours": [
     {
@@ -108,9 +108,9 @@
       {
         "id": "a1f0c2d4e6b84f01a1f0c2d4e6b84f01",
         "image": "d0917645f3c7405a8d236dd718ecc727.jpg",
-        "badge": "Herzlich willkommen",
+        "badge": "Neueröffnung · Unsere 2. Filiale!",
         "title": "Ihr Service-Center – Jetzt auch Zuhause",
-        "text": "Internetcafé, neue und gebrauchte Handys, Zubehör und Reparaturen – alles unter einem Dach.",
+        "text": "Die Networkcity-Familie wächst: Internetcafé, Handys, Zubehör und Reparaturen – alles unter einem Dach, ab sofort auch bei uns.",
         "link": "",
         "link_label": "",
         "enabled": true
@@ -118,9 +118,9 @@
       {
         "id": "4257328c9966424a8b3e4f1dcc6ab757",
         "image": "8c2b19a2b0ff4bdfbc30bf9886b277df.jpg",
-        "badge": "",
-        "title": "",
-        "text": "",
+        "badge": "Gleiche Familie – neue Adresse",
+        "title": "Zweiter Laden, gleiche Liebe",
+        "text": "Kennen Sie uns schon aus dem ersten Laden? Bei uns bekommen Sie denselben vertrauten Service – besuchen Sie uns doch gleich vier- und intensiver!",
         "link": "",
         "link_label": "",
         "enabled": true
