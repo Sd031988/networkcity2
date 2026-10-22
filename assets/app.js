@@ -241,15 +241,20 @@
     return document.documentElement.dataset.theme === "orange";
   }
 
+  function cafeOn() {
+    return !((settings.internetcafe || {}).enabled === false);
+  }
+
   function immersiveHtml() {
     const b = settings.business;
     const c = settings.internetcafe || {}, r = settings.repair || {};
-    const steps = [
+    let steps = [
       ["computer", "Internetcafé", c.text || "PC-Arbeitsplätze, Drucken, Kopieren, Scannen und WLAN.", "#internetcafe", "Zum Internetcafé"],
       ["smartphone", "Handys", "Neu und geprüft gebraucht – zum fairen Preis, mit Gewährleistung und persönlicher Beratung im Laden.", "#shop", "Zum Handy-Shop"],
       ["build", "Reparatur", r.text || "Display, Akku, Ladebuchse und mehr – schnell und zum fairen Preis.", "#reparatur", "Zur Reparatur"],
       ["headphones", "Zubehör", "Hüllen, Ladegeräte, Kabel, Kopfhörer und mehr – passend zu Ihrem Gerät.", "#zubehoer", "Zum Zubehör"],
     ];
+    if (!cafeOn()) steps = steps.filter(function (s) { return s[3] !== "#internetcafe"; });
     const scene =
       '<div class="x-scene" aria-hidden="true"><div class="x-tilt">' +
         '<div class="x-glow"></div>' +
@@ -379,7 +384,7 @@
       html += '<div class="hero' + (promo ? " after-promo" : "") + '">';
       if (b.hero_image) html += '<img class="hero-img" src="' + esc(imageUrl(b.hero_image)) + '" alt="Logo des Ladens ' + esc(b.name) + '">';
       html += "<h1>" + esc(b.hero_title) + '</h1><p class="lead">' + esc(b.hero_subtitle) + "</p>" +
-        '<div class="chips"><a class="chip" href="#shop">Neu & geprüft gebraucht</a><a class="chip" href="#reparatur">Reparatur</a><a class="chip" href="#internetcafe">Internetcafé</a><a class="chip" href="#zubehoer">Zubehör</a></div>' +
+        '<div class="chips">' + ["<a class=\"chip\" href=\"#shop\">Neu & geprüft gebraucht</a>", "<a class=\"chip\" href=\"#reparatur\">Reparatur</a>", cafeOn() ? "<a class=\"chip\" href=\"#internetcafe\">Internetcafé</a>" : "", "<a class=\"chip\" href=\"#zubehoer\">Zubehör</a>"].filter(Boolean).join("") + "</div>" +
         '<div class="btn-row center"><a class="btn primary" href="#shop">' + icon("shopping_bag") + 'Zum Handy-Shop</a><a class="btn" href="#kontakt">' + icon("route") + "Kontakt & Anfahrt</a></div></div>";
     }
     html += specialHoursBox();
@@ -389,12 +394,13 @@
       html += '<section><h2 class="section-title">' + icon("local_offer") + 'Aktuelle Angebote</h2><div class="grid c3">' + featured.map(productCard).join("") + "</div></section>";
     }
 
-    const services = [
+    let services = [
       ["computer", "Internetcafé", "PC-Arbeitsplätze, Drucken, Kopieren, Scannen und WLAN für alle.", "#internetcafe"],
       ["smartphone", "Handys neu & gebraucht", "Aktuelle Modelle und geprüfte Gebrauchtgeräte zum fairen Preis.", "#shop"],
       ["build", "Reparaturservice", "Schnelle Reparatur von Display, Akku, Ladebuchse und mehr.", "#reparatur"],
       ["headphones", "Zubehör", "Hüllen, Ladegeräte, Kabel, Kopfhörer und vieles mehr im Laden.", "#zubehoer"],
     ];
+    if (!cafeOn()) services = services.filter(function (s) { return s[3] !== "#internetcafe"; });
     html += '<section><h2 class="section-title">' + icon("grid_view") + 'Unsere Services</h2><div class="grid c4">' +
       services.map(function (s) {
         return '<a class="card service-card" href="' + s[3] + '" style="text-decoration:none;color:inherit">' + icon(s[0], "big") + "<h3>" + s[1] + "</h3><p>" + s[2] + "</p></a>";
@@ -697,7 +703,7 @@
     if (promoTimer) { clearInterval(promoTimer); promoTimer = null; }
     if (immersiveOff) immersiveOff();
     let page = (location.hash || "#start").slice(1);
-    if (!PAGES[page]) page = "start";
+    if (!PAGES[page] || (page === "internetcafe" && !cafeOn())) page = "start";
     nav.querySelectorAll("a").forEach(function (a) {
       const on = a.dataset.page === page;
       a.classList.toggle("active", on);
@@ -794,7 +800,7 @@
     footer.innerHTML =
       '<div class="f-col f-brand">' + (b.logo ? '<img src="' + esc(imageUrl(b.logo)) + '" alt="' + esc(b.name) + '" loading="lazy">' : "<strong>" + esc(b.name) + "</strong>") +
         (b.tagline ? "<p>" + esc(b.tagline) + "</p>" : "") + statusPill("in-footer") + "</div>" +
-      '<nav class="f-col" aria-label="Seiten in der Fußzeile"><h4>Seiten</h4><a href="#internetcafe">Internetcafé</a><a href="#shop">Handy-Shop</a><a href="#zubehoer">Zubehör</a><a href="#reparatur">Reparatur</a><a href="#kontakt">Kontakt & Anfahrt</a></nav>' +
+      '<nav class="f-col" aria-label="Seiten in der Fußzeile"><h4>Seiten</h4>' + (cafeOn() ? '<a href="#internetcafe">Internetcafé</a>' : "") + '<a href="#shop">Handy-Shop</a><a href="#zubehoer">Zubehör</a><a href="#reparatur">Reparatur</a><a href="#kontakt">Kontakt & Anfahrt</a></nav>' +
       '<div class="f-col"><h4>Kontakt</h4>' +
         (b.street ? "<p>" + esc(b.street) + "<br>" + esc(b.zip_city) + "</p>" : "") +
         (telLink(b.phone) ? '<a href="' + esc(telLink(b.phone)) + '">' + icon("call") + " " + esc(b.phone) + "</a>" : "") +

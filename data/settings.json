@@ -181,6 +181,7 @@
     }
   ],
   "internetcafe": {
+    "enabled": false,
     "title": "Internetcafé",
     "text": "Schnelles Internet, ruhige Arbeitsplätze und alle Dienstleistungen, die Sie im Alltag brauchen – vom Ausdrucken bis zur Bildbearbeitung. Kommen Sie einfach vorbei.",
     "bullet_points": [
