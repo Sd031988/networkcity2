@@ -54,7 +54,7 @@
   ],
   "special_hours": [],
   "sold_remove_days": 1,
-  "theme": "nacht",
+  "theme": "orange",
   "payment_methods": [
     {
       "id": "paypal",
